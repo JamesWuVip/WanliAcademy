@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025万里书院“未来小创客：AI探秘之旅”课程 (新部署测试)</title>
+    <title>万里书院“未来小创客：AI探秘之旅”课程 (最终版)</title>
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,20 +14,16 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
-        /* Pre-compiled Tailwind CSS - No external scripts needed */
+        /* Fully Pre-compiled Tailwind CSS - Final Version */
         *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
         html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;scroll-behavior:smooth}
         body{margin:0;line-height:inherit;font-family:'Inter',sans-serif;background-color:#111827;color:#f3f4f6}
-        h1,h2,h3,p,a,label,strong{margin:0;padding:0}
-        img,svg{display:block;vertical-align:middle;max-width:100%}
+        h1,h2,h3,h4,h5,h6,p,a,label,strong,span{margin:0;padding:0}
+        img,svg{display:block;vertical-align:middle;max-width:100%;height:auto}
         button,input{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}
         button{text-transform:none}
         button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}
         .container{width:100%;margin-left:auto;margin-right:auto;padding-left:1.5rem;padding-right:1.5rem}
-        @media (min-width:640px){.container{max-width:640px}}
-        @media (min-width:768px){.container{max-width:768px}}
-        @media (min-width:1024px){.container{max-width:1024px}}
-        @media (min-width:1280px){.container{max-width:1280px}}
         .sticky{position:sticky}
         .absolute{position:absolute}
         .relative{position:relative}
@@ -38,6 +34,8 @@
         .z-50{z-index:50}
         .mx-auto{margin-left:auto;margin-right:auto}
         .mt-1{margin-top:.25rem}
+        .mb-1{margin-bottom:.25rem}
+        .mb-2{margin-bottom:.5rem}
         .mb-3{margin-bottom:.75rem}
         .mb-4{margin-bottom:1rem}
         .mb-6{margin-bottom:1.5rem}
@@ -49,9 +47,11 @@
         .flex{display:flex}
         .grid{display:grid}
         .hidden{display:none}
+        .h-6{height:1.5rem}
         .h-8{height:2rem}
         .h-16{height:4rem}
         .h-48{height:12rem}
+        .h-auto{height:auto}
         .w-6{width:1.5rem}
         .w-8{width:2rem}
         .w-16{width:4rem}
@@ -68,6 +68,7 @@
         .scroll-animate.visible{opacity:1;transform:translateY(0)}
         .gap-6{gap:1.5rem}
         .gap-8{gap:2rem}
+        .gap-16{gap:4rem}
         .space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * (1 - var(--tw-space-x-reverse)))}
         .space-x-8>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(2rem * var(--tw-space-x-reverse));margin-left:calc(2rem * (1 - var(--tw-space-x-reverse)))}
         .space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-bottom:calc(1rem * var(--tw-space-y-reverse));margin-top:calc(1rem * (1 - var(--tw-space-y-reverse)))}
@@ -80,6 +81,7 @@
         .rounded-full{border-radius:9999px}
         .border{border-width:1px}
         .border-4{border-width:4px}
+        .border-gray-600{border-color:#4b5563}
         .border-gray-700{border-color:#374151}
         .border-gray-800{border-color:#1f2937}
         .hover\:border-indigo-500:hover{border-color:#6366f1}
@@ -107,7 +109,9 @@
         .px-8{padding-left:2rem;padding-right:2rem}
         .py-16{padding-top:4rem;padding-bottom:4rem}
         .py-24{padding-top:6rem;padding-bottom:6rem}
+        .py-8{padding-top:2rem;padding-bottom:2rem}
         .text-center{text-align:center}
+        .text-sm{font-size:.875rem;line-height:1.25rem}
         .text-lg{font-size:1.125rem;line-height:1.75rem}
         .text-xl{font-size:1.25rem;line-height:1.75rem}
         .text-2xl{font-size:1.5rem;line-height:2rem}
@@ -138,6 +142,11 @@
         .hero-bg{background-image:url('https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=2020&auto=format&fit=crop');background-size:cover;background-position:center;position:relative}
         .hero-bg::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background-color:rgba(17,24,39,.7);backdrop-filter:blur(4px)}
         .hero-content{position:relative;z-index:10}
+        .flex-col{flex-direction:column}
+        @media (min-width:640px){
+            .sm\:w-1\/3{width:33.333333%}
+            .sm\:flex-row{flex-direction:row}
+        }
         @media (min-width:768px){
             .md\:flex{display:flex}
             .md\:hidden{display:none}
@@ -149,6 +158,8 @@
             .md\:text-6xl{font-size:3.75rem;line-height:1}
             .md\:py-24{padding-top:6rem;padding-bottom:6rem}
             .md\:py-32{padding-top:8rem;padding-bottom:8rem}
+            .md\:mb-0{margin-bottom:0}
+            .md\:w-1\/2{width:50%}
         }
         @media (min-width:1024px){
             .lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -239,32 +250,26 @@
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">六大核心亮点，引爆孩子的<span class="gradient-text">科创潜能</span></h2>
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Highlight Card 1 -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-indigo-500 transition flex items-start space-x-4">
                         <svg class="w-8 h-8 text-indigo-400 flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" /></svg>
                         <div><h3 class="text-xl font-bold mb-2">沉浸式PBL挑战</h3><p class="text-gray-400">告别枯燥听讲！每节课一个核心项目，让孩子在解决真实问题中趣学、趣创。</p></div>
                     </div>
-                    <!-- Highlight Card 2 -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-indigo-500 transition flex items-start space-x-4">
                         <svg class="w-8 h-8 text-indigo-400 flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
                         <div><h3 class="text-xl font-bold mb-2">零基础友好设计</h3><p class="text-gray-400">专为中小学生定制，通过可视化工具和生动比喻，确保每个孩子都能轻松上手。</p></div>
                     </div>
-                    <!-- Highlight Card 3 -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-indigo-500 transition flex items-start space-x-4">
                         <svg class="w-8 h-8 text-indigo-400 flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0v5.5a2.5 2.5 0 005 0V14" /></svg>
                         <div><h3 class="text-xl font-bold mb-2">清华硕士名师亲授</h3><p class="text-gray-400">AI专家武老师亲自授课，以前沿视野和专业知识为孩子的AI启蒙保驾护航。</p></div>
                     </div>
-                    <!-- Highlight Card 4 -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-indigo-500 transition flex items-start space-x-4">
                         <svg class="w-8 h-8 text-indigo-400 flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" /></svg>
                         <div><h3 class="text-xl font-bold mb-2">未来超能力觉醒</h3><p class="text-gray-400">全面提升孩子的创新思维与解决问题能力，塑造拥有“科技向善”价值观的未来公民。</p></div>
                     </div>
-                    <!-- Highlight Card 5 -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-indigo-500 transition flex items-start space-x-4">
                         <svg class="w-8 h-8 text-indigo-400 flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                         <div><h3 class="text-xl font-bold mb-2">“小艾”全程陪伴</h3><p class="text-gray-400">引入可爱的虚拟助教“小艾”，作为故事引导者和互动伙伴，极大提升课堂趣味性。</p></div>
                     </div>
-                    <!-- Highlight Card 6 -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-indigo-500 transition flex items-start space-x-4">
                         <svg class="w-8 h-8 text-indigo-400 flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>
                         <div><h3 class="text-xl font-bold mb-2">赋能学科学习</h3><p class="text-gray-400">将AI与语数外深度结合，设计“AI学习挑战官”，让孩子掌握超强学习工具。</p></div>
@@ -279,11 +284,9 @@
                 <div class="text-center mb-12">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">AI探秘之旅<span class="gradient-text">通关路线图</span></h2>
                 </div>
-                <!-- Timeline Container -->
                 <div class="grid gap-16 lg:grid-cols-2">
-                    <!-- Timeline Item 1 -->
                     <div class="flex flex-col sm:flex-row items-start gap-6">
-                        <img src="https://placehold.co/600x400/111827/4f46e5?text=AI情绪识别" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI情绪识别插图]" class="w-full sm:w-1/3 h-auto rounded-lg shadow-lg">
+                        <img src="https://placehold.co/600x400/111827/4f46e5?text=AI情绪识别" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI情绪识别插图]" class="w-full sm:w-1/3 rounded-lg shadow-lg">
                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex-1">
                             <p class="text-indigo-400 font-bold mb-1">第一站</p>
                             <h3 class="text-2xl font-bold mb-3">揭秘AI超能力</h3>
@@ -291,9 +294,8 @@
                             <p class="text-gray-400"><span class="font-semibold text-white">家长收获点：</span>孩子能设计一个“读懂”情绪的AI游戏，理解AI学习的基本原理。</p>
                         </div>
                     </div>
-                    <!-- Timeline Item 2 -->
                     <div class="flex flex-col sm:flex-row items-start gap-6">
-                        <img src="https://placehold.co/600x400/111827/ec4899?text=AI自然探索" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI自然探索插图]" class="w-full sm:w-1/3 h-auto rounded-lg shadow-lg">
+                        <img src="https://placehold.co/600x400/111827/ec4899?text=AI自然探索" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI自然探索插图]" class="w-full sm:w-1/3 rounded-lg shadow-lg">
                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex-1">
                             <p class="text-indigo-400 font-bold mb-1">第二站</p>
                             <h3 class="text-2xl font-bold mb-3">AI的智慧之眼</h3>
@@ -301,9 +303,8 @@
                             <p class="text-gray-400"><span class="font-semibold text-white">家长收获点：</span>孩子能设计一个解决“动植物不认识”痛点的AI助手，让户外探索变学习。</p>
                         </div>
                     </div>
-                    <!-- Timeline Item 3 -->
                     <div class="flex flex-col sm:flex-row items-start gap-6">
-                        <img src="https://placehold.co/600x400/111827/4f46e5?text=AI艺术创作" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI艺术创作插图]" class="w-full sm:w-1/3 h-auto rounded-lg shadow-lg">
+                        <img src="https://placehold.co/600x400/111827/4f46e5?text=AI艺术创作" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI艺术创作插图]" class="w-full sm:w-1/3 rounded-lg shadow-lg">
                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex-1">
                             <p class="text-indigo-400 font-bold mb-1">第三站</p>
                             <h3 class="text-2xl font-bold mb-3">AI的创意工坊</h3>
@@ -311,9 +312,8 @@
                             <p class="text-gray-400"><span class="font-semibold text-white">家长收获点：</span>孩子能用AI创作精美有声绘本，成为传统文化的“小小传承官”。</p>
                         </div>
                     </div>
-                    <!-- Timeline Item 4 -->
                     <div class="flex flex-col sm:flex-row items-start gap-6">
-                        <img src="https://placehold.co/600x400/111827/ec4899?text=AI辅助学习" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI辅助学习插图]" class="w-full sm:w-1/3 h-auto rounded-lg shadow-lg">
+                        <img src="https://placehold.co/600x400/111827/ec4899?text=AI辅助学习" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI辅助学习插图]" class="w-full sm:w-1/3 rounded-lg shadow-lg">
                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex-1">
                             <p class="text-indigo-400 font-bold mb-1">第四站</p>
                             <h3 class="text-2xl font-bold mb-3">AI的超级大脑</h3>
@@ -321,9 +321,8 @@
                             <p class="text-gray-400"><span class="font-semibold text-white">家长收获点：</span>孩子能用AI把枯燥学习变闯关游戏，激发自主学习力。</p>
                         </div>
                     </div>
-                    <!-- Timeline Item 5 -->
                     <div class="flex flex-col sm:flex-row items-start gap-6">
-                        <img src="https://placehold.co/600x400/111827/4f46e5?text=AI未来城市" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI未来城市插图]" class="w-full sm:w-1/3 h-auto rounded-lg shadow-lg">
+                        <img src="https://placehold.co/600x400/111827/4f46e5?text=AI未来城市" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI未来城市插图]" class="w-full sm:w-1/3 rounded-lg shadow-lg">
                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex-1">
                             <p class="text-indigo-400 font-bold mb-1">第五站</p>
                             <h3 class="text-2xl font-bold mb-3">AI的未来乐园</h3>
@@ -331,9 +330,8 @@
                             <p class="text-gray-400"><span class="font-semibold text-white">家长收获点：</span>孩子能用AI让历史人物“复活”，展现超强创意和文化底蕴。</p>
                         </div>
                     </div>
-                    <!-- Timeline Item 6 -->
                     <div class="flex flex-col sm:flex-row items-start gap-6">
-                        <img src="https://placehold.co/600x400/111827/ec4899?text=AI伦理与责任" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI伦理与责任插图]" class="w-full sm:w-1/3 h-auto rounded-lg shadow-lg">
+                        <img src="https://placehold.co/600x400/111827/ec4899?text=AI伦理与责任" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/ffffff?text=Image+Not+Found';" alt="[AI伦理与责任插图]" class="w-full sm:w-1/3 rounded-lg shadow-lg">
                         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex-1">
                             <p class="text-indigo-400 font-bold mb-1">第六站</p>
                             <h3 class="text-2xl font-bold mb-3">AI的边界与责任</h3>
@@ -370,7 +368,6 @@
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">立即加入，为孩子的<span class="gradient-text">未来赋能</span>！</h2>
                 </div>
                 <div class="max-w-4xl mx-auto md:flex gap-8">
-                    <!-- Course Info -->
                     <div class="md:w-1/2 bg-gray-800 p-8 rounded-xl border border-gray-700 mb-8 md:mb-0">
                         <h3 class="text-2xl font-bold mb-6">课程信息</h3>
                         <div class="space-y-4 text-gray-300">
@@ -385,7 +382,6 @@
                             <p><strong>家长AI沙龙：</strong> 报名家长可免费参加“AI时代家庭教育”主题讲座。</p>
                         </div>
                     </div>
-                    <!-- Signup Form -->
                     <div class="md:w-1/2 bg-gray-800 p-8 rounded-xl border border-gray-700">
                         <h3 class="text-2xl font-bold mb-6">席位预定</h3>
                         <form action="#" method="POST" onsubmit="alert('报名信息已提交！'); return false;">
@@ -429,7 +425,7 @@
                     }
                 });
             }, {
-                threshold: 0.1 // Trigger when 10% of the element is visible
+                threshold: 0.1
             });
 
             document.querySelectorAll('.scroll-animate').forEach((el) => {
@@ -440,4 +436,3 @@
 
 </body>
 </html>
-\
