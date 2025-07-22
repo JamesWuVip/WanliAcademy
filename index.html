@@ -54,7 +54,7 @@
         .h-auto{height:auto}
         .w-6{width:1.5rem}
         .w-8{width:2rem}
-        .w-16{width:4rem}
+        .w-16{width=4rem}
         .w-48{width:12rem}
         .w-full{width:100%}
         .max-w-2xl{max-width:42rem}
@@ -175,7 +175,10 @@
     <!-- Header & Navigation Bar -->
     <header class="bg-black/50 backdrop-blur-sm sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white">万里书院</a>
+            <!-- 用 logo 图片替换左上角文字，大小与原视觉一致 -->
+            <a href="#" class="flex items-center">
+                <img src="images/logo.png" alt="万里书院 Logo" style="height:64px; width:auto; background:transparent;">
+            </a>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#highlights" class="text-gray-300 hover:text-white transition">课程亮点</a>
                 <a href="#map" class="text-gray-300 hover:text-white transition">课程地图</a>
@@ -196,6 +199,7 @@
                 </div>
             </div>
         </nav>
+      
     </header>
 
     <main>
@@ -278,6 +282,15 @@
                         <div><h3 class="text-xl font-bold mb-2">赋能学科学习</h3><p class="text-gray-400">将AI与语数外深度结合，设计“AI学习挑战官”，让孩子掌握超强学习工具。</p></div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- 在课程亮点 section 下方加入“小艾”形象图片，居中显示 -->
+        <!-- 小艾形象缩小5倍，居中显示 -->
+        <section class="py-8 bg-gray-900">
+            <div class="container mx-auto flex flex-col items-center">
+                <img src="images/xiaoai.png" alt="虚拟助教小艾" style="width:288px; height:288px; object-fit:cover;" class="rounded-xl shadow-lg mb-2">
+                <p class="text-indigo-400 text-base font-bold">虚拟助教“小艾”全程陪伴，激发孩子学习兴趣！</p>
             </div>
         </section>
 
