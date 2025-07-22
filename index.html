@@ -419,18 +419,23 @@
                     </div>
                     <div class="md:w-1/2 bg-gray-800 p-8 rounded-xl border border-gray-700">
                         <h3 class="text-2xl font-bold mb-6">席位预定</h3>
-                        <form action="#" method="POST" onsubmit="alert('报名信息已提交！'); return false;">
+                        <form id="signup-form" name="signup-form" onsubmit="sendMail(event)">
                             <div class="mb-4">
                                 <label for="student-name" class="block text-gray-300 mb-2">孩子姓名</label>
-                                <input type="text" id="student-name" name="student-name" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <input type="text" id="student-name" name="student_name" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required pattern="^[\u4e00-\u9fa5]{2,10}$" title="请输入2-10个中文字符">
                             </div>
                             <div class="mb-4">
                                 <label for="grade" class="block text-gray-300 mb-2">年级</label>
-                                <input type="text" id="grade" name="grade" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <select id="grade" name="grade" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                    <option value="">请选择年级</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                </select>
                             </div>
                             <div class="mb-6">
                                 <label for="parent-phone" class="block text-gray-300 mb-2">家长联系方式</label>
-                                <input type="tel" id="parent-phone" name="parent-phone" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <input type="tel" id="parent-phone" name="parent_phone" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required pattern="^1[3-9]\d{9}$" title="请输入有效的11位手机号码">
                             </div>
                             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition">
                                 提交，抢占先机！
@@ -450,6 +455,14 @@
         </div>
     </footer>
 
+    <!-- 在<head>中引入EmailJS SDK，并用公钥初始化（参考官方新文档） -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("U9d-Qb1gURPlKENzl"); // 替换为你的EmailJS公钥（如：'QwErTy123456'）
+    })();
+</script>
+
     <script>
         // JavaScript for scroll animations
         document.addEventListener('DOMContentLoaded', () => {
@@ -468,6 +481,19 @@
             });
         });
     </script>
+
+    <script>
+function sendMail(e) {
+    e.preventDefault();
+    emailjs.sendForm('service_vuuwjre', 'template_xxcnftr', '#signup-form')
+        .then(function(response) {
+            alert('报名信息已提交并已发送邮件！');
+            document.getElementById('signup-form').reset();
+        }, function(error) {
+            alert('提交失败，请稍后再试。');
+        });
+}
+</script>
 
 </body>
 </html>
