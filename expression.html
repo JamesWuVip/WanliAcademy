@@ -308,6 +308,20 @@
             margin-top: 10px;
             text-align: center;
         }
+
+        .bonus-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--secondary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s, top 0.5s;
+        }
         
         #label-container { 
             font-size: 1rem; 
@@ -495,14 +509,15 @@
             </div>
             <div class="right-column">
                 <div class="info-panel">
-                    <div id="label-container"></div>
                     <div id="result"></div>
+                    <div id="label-container"></div>
                     <div id="emoji"></div>
                     <div id="score">分数: 0</div>
                     <div class="progress-container">
                         <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
                     </div>
                     <div id="challenge"></div>
+                     <div id="bonus-toast" class="bonus-toast"></div>
                 </div>
                 <div class="xiaoai-section">
                     <div class="xiaoai-container">
@@ -674,7 +689,7 @@
                     // 连续成功奖励
                     if (consecutiveSuccess >= 3) {
                         score += 5;
-                        document.getElementById("challenge").innerHTML += `<div class="bonus-message">连续成功 +5 分！</div>`;
+                        showBonusToast("连续成功 +5 分！");
                     }
                     
                     document.getElementById("score").innerText = "分数: " + score;
@@ -723,6 +738,20 @@
                     }
                 }
             }
+        }
+
+        
+
+                function showBonusToast(message) {
+            const toast = document.getElementById('bonus-toast');
+            toast.textContent = message;
+            toast.style.top = '20px';
+            toast.style.opacity = 1;
+
+            setTimeout(() => {
+                toast.style.opacity = 0;
+                toast.style.top = '0px';
+            }, 2000); // 2秒后消失
         }
 
         function stopGame() {
@@ -775,11 +804,11 @@
             let emotionColor = emotionEmojis[challengeEmotion].color;
             
             document.getElementById("challenge").innerHTML = `
-                <div style="font-size: 1.2rem; font-weight: bold; color: ${emotionColor};">
-                    挑战开始：请做出【${challengeEmotion}】的表情！
-                    ${emotionEmojis[challengeEmotion].emoji}
-                </div>
-            `;
+                  <div style="font-size: 1.2rem; font-weight: bold; color: ${emotionColor};">
+                      挑战开始：请做出【${challengeEmotion}】的表情！
+ 
+                  </div>
+              `;
             document.getElementById("result").innerHTML = "";
             document.getElementById("emoji").innerText = "";
             
