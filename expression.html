@@ -76,6 +76,81 @@
             color: var(--light);
             margin: 0 0 5px 0; /* Removed top margin */
         }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--light);
+            cursor: pointer;
+            padding: 5px;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+
+        .icon-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
+        }
+
+        .modal-content {
+            background-color: var(--dark-blue);
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid var(--primary);
+            border-radius: 15px;
+            width: 80%; 
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .close-btn {
+            color: var(--gray);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--light);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-light);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            background-color: var(--dark);
+            color: var(--light);
+            font-size: 1rem;
+        }
         
         .container {
             display: flex;
@@ -500,8 +575,21 @@
                 <button type="button" onclick="init()" id="start-btn">开始游戏</button>
                 <button type="button" onclick="stopGame()" id="stop-btn" disabled>停止游戏</button>
                 <button type="button" onclick="startChallenge()" id="challenge-btn" disabled>表情挑战</button>
+                <button type="button" id="settings-btn">⚙️</button>
             </div>
         </header>
+
+        <div id="settings-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>设置</h2>
+                <div class="form-group">
+                    <label for="api-url-input">AI 模型 API 地址:</label>
+                    <input type="text" id="api-url-input" placeholder="https://teachablemachine.withgoogle.com/models/your-model/">
+                </div>
+                <button id="save-settings-btn">保存</button>
+            </div>
+        </div>
         
         <div class="container">
             <div class="left-column">
@@ -542,7 +630,8 @@
     <script src="https://unpkg.com/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://unpkg.com/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script type="text/javascript">
-        const URL = "https://teachablemachine.withgoogle.com/models/l5zlFP5FJ/";
+        let modelApiUrl = 'https://teachablemachine.withgoogle.com/models/l5zlFP5FJ/'; // 默认地址
+        const URL = modelApiUrl;
         let model, webcam, labelContainer, maxPredictions;
         let isGameRunning = false;
         let animationFrameId;
@@ -843,6 +932,48 @@
                     }, 2000);
                 }
             }, 1000);
+        }
+
+        // Settings Modal Logic
+        const settingsModal = document.getElementById('settings-modal');
+        const settingsBtn = document.getElementById('settings-btn');
+        const closeBtn = document.querySelector('.close-btn');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        const apiUrlInput = document.getElementById('api-url-input');
+
+        // Load saved API URL on page load
+        const savedApiUrl = localStorage.getItem('modelApiUrl');
+        if (savedApiUrl) {
+            modelApiUrl = savedApiUrl;
+            apiUrlInput.value = savedApiUrl;
+        } else {
+            apiUrlInput.value = modelApiUrl; // Show default URL in placeholder
+        }
+
+        settingsBtn.onclick = function() {
+            settingsModal.style.display = 'block';
+        }
+
+        closeBtn.onclick = function() {
+            settingsModal.style.display = 'none';
+        }
+
+        saveSettingsBtn.onclick = function() {
+            const newUrl = apiUrlInput.value.trim();
+            if (newUrl) {
+                modelApiUrl = newUrl;
+                localStorage.setItem('modelApiUrl', newUrl);
+                alert('API 地址已保存！请重新开始游戏以加载新模型。');
+                settingsModal.style.display = 'none';
+            } else {
+                alert('请输入有效的 API 地址。');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target == settingsModal) {
+                settingsModal.style.display = 'none';
+            }
         }
     </script>
 </body>
