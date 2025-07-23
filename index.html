@@ -289,9 +289,37 @@
         <!-- 小艾形象缩小5倍，居中显示 -->
         <section class="py-8 bg-gray-900">
             <div class="container mx-auto flex flex-col items-center">
-                <img src="images/xiaoai.png" alt="虚拟助教小艾" style="width:288px; height:288px; object-fit:cover;" class="rounded-xl shadow-lg mb-2">
-                <p class="text-indigo-400 text-base font-bold">虚拟助教“小艾”全程陪伴，激发孩子学习兴趣！</p>
+                <div style="width:248px; height:248px; position:relative;">
+                    <img id="xiaoai-cover" src="images/xiaoai.png" alt="虚拟助教小艾" style="width:248px; height:248px; object-fit:cover; border-radius:24px; box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05); position:absolute; top:0; left:0; z-index:2;">
+                    <video id="xiaoai-video"
+                        src="images/xiaoai.mp4"
+                        style="width:248px; height:248px; object-fit:cover; border-radius:24px; box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05); position:absolute; top:0; left:0; z-index:3;"
+                        playsinline
+                        controls
+                    ></video>
+                </div>
+                <p class="text-indigo-400 text-base font-bold mt-2">虚拟助教“小艾”全程陪伴，激发孩子学习兴趣！</p>
             </div>
+            <script>
+                // 自动播放视频，加载完毕后封面隐藏，播放完后封面显示
+                document.addEventListener('DOMContentLoaded', function () {
+                    const video = document.getElementById('xiaoai-video');
+                    const cover = document.getElementById('xiaoai-cover');
+                    video.addEventListener('canplay', function () {
+                        video.muted = false; // 取消静音
+                        video.play();
+                        cover.style.display = 'none';
+                    });
+                    video.addEventListener('ended', function () {
+                        cover.style.display = '';
+                    });
+                    video.addEventListener('pause', function () {
+                        if (video.currentTime < video.duration) {
+                            cover.style.display = '';
+                        }
+                    });
+                });
+            </script>
         </section>
 
         <!-- Course Map Section -->
