@@ -5,54 +5,594 @@
     <title>表情识别情绪小游戏</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background: #181f2a; color: #fff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; text-align: center; }
-        h1 { margin-top: 2rem; font-size: 2rem; }
-        #webcam-container { margin: 2rem auto 1rem; }
-        #label-container { font-size: 1.2rem; margin-bottom: 1.5rem; }
-        #result { font-size: 1.5rem; font-weight: bold; margin-top: 1.5rem; }
-        #score, #challenge { font-size: 1.2rem; margin-top: 1rem; }
-        #emoji { font-size: 4rem; margin-top: 1rem; }
-        button { background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 0.7rem 2rem; font-size: 1.1rem; cursor: pointer; margin-top: 1.5rem; margin-left: 0.5rem; }
-        button:hover { background: #4f46e5; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #a5a6f6;
+            --secondary: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --dark: #111827;
+            --dark-blue: #1E293B;
+            --light: #F3F4F6;
+            --gray: #6B7280;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            overflow: hidden; /* Prevent page scroll */
+        }
+
+        body { 
+            background: linear-gradient(135deg, var(--dark-blue), var(--dark)); 
+            color: var(--light); 
+        }
+        
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 0 2vw 1vh 2vw; /* Removed top padding */
+        }
+        
+        header {
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/station1.png') center/cover no-repeat;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        h1 { 
+            font-size: 1.4rem; /* Reduced font size */
+            font-weight: 700;
+            color: var(--primary); 
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--light);
+            margin: 0 0 5px 0; /* Removed top margin */
+        }
+        
+        .container {
+            display: flex;
+            flex: 1;
+            gap: 2vw;
+            padding: 0 1.5vw 1.5vh 1.5vw; /* Removed top padding */
+            min-height: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 5px; /* Further reduced margin */
+        }
+        
+        button { 
+            background: var(--primary); 
+            color: var(--light); 
+            border: none; 
+            border-radius: 10px; 
+            padding: 8px 16px; 
+            font-size: 1rem; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        button:hover { 
+            background: var(--primary-dark); 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); 
+        }
+        
+        button:disabled { 
+            background: var(--primary-light); 
+            cursor: not-allowed; 
+            transform: none; 
+            box-shadow: none; 
+        }
+        
+        #start-btn::before {
+            content: '▶';
+        }
+        
+        #challenge-btn::before {
+            content: '🏆';
+        }
+
+        #stop-btn {
+            background: var(--danger);
+        }
+
+        #stop-btn:hover {
+            background: #B91C1C;
+        }
+
+        #stop-btn::before {
+            content: '⏹';
+        }
+        
+        .left-column {
+            flex: 1; /* Equal width */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align to top */
+            min-width: 0;
+        }
+
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1vh; /* Tighter gap */
+            min-width: 0;
+            min-height: 0; /* Crucial for flex shrinking */
+        }
+
+
+
+        .info-panel {
+            flex: 1; /* Grow to fill available space */
+            min-height: 0; /* Allow shrinking */
+            overflow-y: auto;
+            background: rgba(17, 24, 39, 0.7);
+            border-radius: 15px;
+            padding: 1vh 1.2vw; /* Tighter padding */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .xiaoai-section {
+            flex: 0 0 auto; /* Don't grow, don't shrink, base on content */
+            background: rgba(17, 24, 39, 0.7);
+            border-radius: 15px;
+            padding: 0.5vh 1.2vw; /* Tighter padding */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .game-instructions {
+            flex: 0 0 auto; /* Don't grow, don't shrink, base on content */
+            overflow-y: auto;
+            background: rgba(17, 24, 39, 0.7);
+            border-radius: 15px;
+            padding: 1vh 1.2vw; /* Tighter padding */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .game-instructions h4 {
+            margin-bottom: 5px;
+        }
+
+        .game-instructions p {
+            margin-bottom: 5px;
+        }
+        
+
+        
+        #webcam-container {
+            width: 100%;
+            aspect-ratio: 4 / 3; /* More common aspect ratio */
+            max-height: 75vh;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            border: 3px solid var(--primary);
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(17, 24, 39, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #webcam-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        #webcam-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.5);
+        }
+        
+        
+
+        .emotion-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 3px; /* More compact margin */
+            padding: 8px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 6px;
+        }
+
+        .emotion-name {
+            width: 80px;
+            font-weight: 500;
+        }
+
+        .emotion-progress {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .emotion-progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .emotion-percentage {
+            width: 60px;
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--light);
+        }
+
+        #result {
+            margin: 15px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        #emoji {
+            font-size: 2rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        #score {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary);
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        #challenge {
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        #label-container { 
+            font-size: 1rem; 
+            margin-bottom: 5px; /* More compact margin */
+        }
+        
+        .emotion-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .emotion-name {
+            width: 80px;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .emotion-progress {
+            flex-grow: 1;
+            height: 10px;
+            background: rgba(107, 114, 128, 0.3);
+            border-radius: 5px;
+            margin: 0 10px;
+            overflow: hidden;
+        }
+        
+        .emotion-progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        
+        .emotion-percentage {
+            width: 60px;
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        #result { 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            margin: 1px 0; /* More compact margin */
+            color: var(--primary); 
+            min-height: 28px;
+            line-height: 1.2;
+        }
+        
+        #emoji { 
+            font-size: 3rem; 
+            margin: 1px 0; /* More compact margin */
+            min-height: 40px; /* Compact height */
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        #score { 
+            font-size: 1.1rem; 
+            font-weight: 600;
+            color: var(--secondary);
+            margin: 1px 0; /* More compact margin */
+            line-height: 1.2;
+        }
+        
+        .progress-container { 
+            width: 100%; 
+            background-color: rgba(107, 114, 128, 0.3); 
+            border-radius: 6px; 
+            margin: 3px 0; /* More compact margin */
+            overflow: hidden;
+        }
+        
+        .progress-bar { 
+            height: 8px; 
+            border-radius: 6px; 
+            background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            transition: width 0.3s ease; 
+        }
+        
+        #challenge { 
+            font-size: 1.2rem; 
+            margin: 1px 0; /* More compact margin */
+            min-height: 28px;
+            line-height: 1.2;
+        }
+        
+
+        
+        .xiaoai-container { 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .xiaoai-image { 
+            width: 80px;
+            height: 80px;
+            border-radius: 15px; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+        
+        .xiaoai-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+        
+        .speech-bubble { 
+            background: white; 
+            color: var(--dark); 
+            padding: 10px 12px; 
+            border-radius: 15px; 
+            width: 90%;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .speech-bubble:after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -15px; 
+            left: 50%; 
+            border-width: 15px 15px 0; 
+            border-style: solid; 
+            border-color: white transparent; 
+        }
+        
+        .game-instructions h3 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .game-instructions ul {
+            padding-left: 15px;
+        }
+        
+        .game-instructions li {
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+        
+        .success-message {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .fail-message {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .bonus-message {
+            color: var(--warning);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <h1>表情识别情绪小游戏</h1>
-    <p>对着摄像头做出表情，看看AI能不能猜出你的情绪！</p>
-    <button type="button" onclick="init()" id="start-btn">开始</button>
-    <button type="button" onclick="startChallenge()" id="challenge-btn" disabled>表情挑战</button>
-    <div id="webcam-container"></div>
-    <div id="label-container"></div>
-    <div id="result"></div>
-    <div id="emoji"></div>
-    <div id="score">分数: 0</div>
-    <div id="challenge"></div>
+    <div class="page-wrapper">
+        <header>
+            <h1 style="font-size: 1.4rem; margin: 0;">表情识别情绪小游戏</h1>
+            <p class="subtitle" style="font-size: 0.8rem; margin: 2px 0 5px 0;">对着摄像头做出表情，看看AI能不能猜出你的情绪！</p>
+            
+            <div class="button-group">
+                <button type="button" onclick="init()" id="start-btn">开始游戏</button>
+                <button type="button" onclick="stopGame()" id="stop-btn" disabled>停止游戏</button>
+                <button type="button" onclick="startChallenge()" id="challenge-btn" disabled>表情挑战</button>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="left-column">
+                <div id="webcam-container"></div>
+            </div>
+            <div class="right-column">
+                <div class="info-panel">
+                    <div id="label-container"></div>
+                    <div id="result"></div>
+                    <div id="emoji"></div>
+                    <div id="score">分数: 0</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div id="challenge"></div>
+                </div>
+                <div class="xiaoai-section">
+                    <div class="xiaoai-container">
+                        <img src="images/xiaoai.png" alt="小艾" class="xiaoai-image" style="width: 100px; height: 100px;">
+                        <div class="speech-bubble" id="xiaoai-speech">你好！我是小艾，来和我一起玩表情游戏吧！</div>
+                    </div>
+                </div>
+                <div class="game-instructions">
+                    <h3>游戏说明</h3>
+                    <ul>
+                        <li>点击<strong>开始游戏</strong>按钮，允许摄像头访问</li>
+                        <li>对着摄像头做出不同的表情，AI会识别你的情绪</li>
+                        <li>点击<strong>表情挑战</strong>按钮开始挑战模式</li>
+                        <li>在挑战模式中，按照提示做出指定表情</li>
+                        <li>连续成功可获得额外分数奖励</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://unpkg.com/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script type="text/javascript">
         const URL = "https://teachablemachine.withgoogle.com/models/l5zlFP5FJ/";
         let model, webcam, labelContainer, maxPredictions;
+        let isGameRunning = false;
+        let animationFrameId;
         let lastEmotion = "";
         let lastTime = Date.now();
         let score = 0;
         let challengeEmotion = null;
+        let challengeTimer = null;
+        let challengeTimeLeft = 0;
+        let consecutiveSuccess = 0;
+        
+        // 表情与对应的emoji和颜色
         const emotionEmojis = {
-            "开心": "😄",
-            "不开心": "😢",
-            "愤怒": "😠",
+            "开心": { emoji: "😄", color: "#10B981" },
+            "不开心": { emoji: "😢", color: "#6366f1" },
+            "愤怒": { emoji: "😠", color: "#EF4444" },
+        };
+        
+        // 小艾的对话内容
+        const xiaoaiMessages = {
+            welcome: "你好！我是小艾，来和我一起玩表情游戏吧！",
+            start: "太好了！请对着摄像头做出各种表情，我来猜猜你的心情~",
+            challenge: "挑战开始！请在时间内做出我要求的表情哦！",
+            success: "太棒了！你真是表情达人！",
+            fail: "别灰心，再试一次吧！",
+            happy: "看到你开心的表情，我也很开心！",
+            sad: "别伤心，做个鬼脸给我看看吧！",
+            angry: "哇，你生气的样子好吓人，但也很有趣！",
+            highScore: "哇！你的分数太高了！你是表情王者！",
+            stop: "游戏已停止，点击“开始游戏”重新开始吧！"
         };
 
+        // 更新小艾的对话
+        function updateXiaoaiSpeech(messageKey) {
+            const speechBubble = document.getElementById("xiaoai-speech");
+            speechBubble.innerText = xiaoaiMessages[messageKey];
+            
+            // 添加动画效果
+            speechBubble.style.transform = "scale(1.1)";
+            speechBubble.style.transition = "transform 0.3s ease";
+            setTimeout(() => {
+                speechBubble.style.transform = "scale(1)";
+            }, 300);
+        }
+
         async function init() {
+            if (isGameRunning) return;
+            isGameRunning = true;
+
             document.getElementById("start-btn").disabled = true;
+            document.getElementById("stop-btn").disabled = false;
+            updateXiaoaiSpeech("start");
+            
             try {
                 const modelURL = URL + "model.json";
                 const metadataURL = URL + "metadata.json";
+                
+                // 显示加载进度
+                document.getElementById("result").innerHTML = `<div style="color: var(--primary);">正在加载模型...</div>`;
+                
                 model = await tmImage.load(modelURL, metadataURL);
                 maxPredictions = model.getTotalClasses();
 
                 const flip = true;
-                webcam = new tmImage.Webcam(200, 200, flip);
+                webcam = new tmImage.Webcam(400, 400, flip); // 增大摄像头尺寸
                 await webcam.setup();
                 await webcam.play();
                 window.requestAnimationFrame(loop);
@@ -60,61 +600,220 @@
                 document.getElementById("webcam-container").appendChild(webcam.canvas);
                 labelContainer = document.getElementById("label-container");
                 labelContainer.innerHTML = "";
-                for (let i = 0; i < maxPredictions; i++) {
-                    labelContainer.appendChild(document.createElement("div"));
-                }
+                
                 document.getElementById("challenge-btn").disabled = false;
+                document.getElementById("result").innerHTML = `<div style="color: var(--secondary);">准备好了！做个表情试试吧~</div>`;
             } catch (err) {
                 alert("摄像头初始化失败，请检查权限或用本地服务器打开页面。\n错误信息：" + err.message);
+                isGameRunning = false;
                 document.getElementById("start-btn").disabled = false;
+                document.getElementById("stop-btn").disabled = true;
+                updateXiaoaiSpeech("fail");
             }
         }
 
         async function loop() {
+            if (!isGameRunning) return;
             webcam.update();
             await predict();
-            window.requestAnimationFrame(loop);
+            animationFrameId = window.requestAnimationFrame(loop);
         }
 
         async function predict() {
             const prediction = await model.predict(webcam.canvas);
             let maxProb = 0;
             let emotion = "";
+            
+            // 清空标签容器
+            labelContainer.innerHTML = "";
+            
+            // 更新预测结果显示
             for (let i = 0; i < maxPredictions; i++) {
-                const classPrediction =
-                    prediction[i].className + ": " + (prediction[i].probability * 100).toFixed(1) + "%";
-                labelContainer.childNodes[i].innerHTML = classPrediction;
-                if (prediction[i].probability > maxProb) {
-                    maxProb = prediction[i].probability;
-                    emotion = prediction[i].className;
+                const probability = prediction[i].probability;
+                const percentage = (probability * 100).toFixed(1);
+                const emotionName = prediction[i].className;
+                
+                // 创建情绪条
+                const emotionBar = document.createElement("div");
+                emotionBar.className = "emotion-bar";
+                
+                // 设置情绪条的颜色
+                let barColor = "var(--primary)";
+                if (emotionEmojis[emotionName]) {
+                    barColor = emotionEmojis[emotionName].color;
+                }
+                
+                // 构建情绪条HTML
+                emotionBar.innerHTML = `
+                    <div class="emotion-name">${emotionName}</div>
+                    <div class="emotion-progress">
+                        <div class="emotion-progress-fill" style="width: ${percentage}%; background-color: ${barColor};"></div>
+                    </div>
+                    <div class="emotion-percentage">${percentage}%</div>
+                `;
+                
+                labelContainer.appendChild(emotionBar);
+                
+                if (probability > maxProb) {
+                    maxProb = probability;
+                    emotion = emotionName;
                 }
             }
+            
+            // 挑战模式逻辑
             if (challengeEmotion) {
-                if (emotion === challengeEmotion && maxProb > 0.8) {
-                    document.getElementById("challenge").innerText = `太棒了！你做出了【${challengeEmotion}】的表情！`;
+                // 更新挑战计时器进度条
+                const progressPercentage = (challengeTimeLeft / 10) * 100;
+                document.getElementById("progress-bar").style.width = `${progressPercentage}%`;
+                
+                if (emotion === challengeEmotion && maxProb > 0.65) { // 降低难度，提高成功率
+                    document.getElementById("challenge").innerHTML = `<div class="success-message">太棒了！你成功做出了【${challengeEmotion}】的表情！</div>`;
                     score += 10;
+                    consecutiveSuccess++;
+                    
+                    // 连续成功奖励
+                    if (consecutiveSuccess >= 3) {
+                        score += 5;
+                        document.getElementById("challenge").innerHTML += `<div class="bonus-message">连续成功 +5 分！</div>`;
+                    }
+                    
                     document.getElementById("score").innerText = "分数: " + score;
-                    challengeEmotion = null; // 挑战成功，重置
+                    
+                    // 根据分数更新小艾的反应
+                    if (score > 50) {
+                        updateXiaoaiSpeech("highScore");
+                    } else {
+                        updateXiaoaiSpeech("success");
+                    }
+                    
+                    // 清除当前挑战计时器
+                    if (challengeTimer) {
+                        clearInterval(challengeTimer);
+                    }
+                    
+                    // 短暂延迟后开始新挑战
+                    setTimeout(() => {
+                        startChallenge();
+                    }, 1500);
                 }
             } else {
-                // 如果识别到的情绪有变化，或者持续2秒以上，显示结果
-                if (emotion !== lastEmotion || Date.now() - lastTime > 2000) {
-                    document.getElementById("result").innerText = "AI识别你现在的情绪是：" + emotion;
+                // 常规模式：更流畅地显示情绪
+                if (emotion !== lastEmotion || Date.now() - lastTime > 800) { // 减少更新间隔，提高响应速度
+                    // 获取情绪对应的颜色
+                    let emotionColor = "var(--primary)";
+                    if (emotionEmojis[emotion]) {
+                        emotionColor = emotionEmojis[emotion].color;
+                    }
+                    
+                    document.getElementById("result").innerHTML = `<div style="color: ${emotionColor};">AI识别你现在的情绪是：${emotion}</div>`;
                     lastEmotion = emotion;
                     lastTime = Date.now();
+                    
                     if (emotionEmojis[emotion]) {
-                        document.getElementById("emoji").innerText = emotionEmojis[emotion];
+                        document.getElementById("emoji").innerText = emotionEmojis[emotion].emoji;
+                        
+                        // 根据情绪更新小艾的反应
+                        if (emotion === "开心") {
+                            updateXiaoaiSpeech("happy");
+                        } else if (emotion === "不开心") {
+                            updateXiaoaiSpeech("sad");
+                        } else if (emotion === "愤怒") {
+                            updateXiaoaiSpeech("angry");
+                        }
                     }
                 }
             }
         }
 
+        function stopGame() {
+            if (!isGameRunning) return;
+            isGameRunning = false;
+
+            if (webcam) {
+                webcam.stop();
+            }
+            if (animationFrameId) {
+                window.cancelAnimationFrame(animationFrameId);
+            }
+            if (challengeTimer) {
+                clearInterval(challengeTimer);
+            }
+
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+            document.getElementById('challenge-btn').disabled = true;
+
+            // Reset variables
+            score = 0;
+            challengeEmotion = null;
+            consecutiveSuccess = 0;
+
+            // Clear UI
+            const webcamContainer = document.getElementById('webcam-container');
+            if (webcamContainer) webcamContainer.innerHTML = '';
+            const labelContainer = document.getElementById("label-container");
+            if(labelContainer) labelContainer.innerHTML = "";
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('emoji').innerText = '';
+            document.getElementById('score').innerText = '分数: 0';
+            document.getElementById('challenge').innerText = '';
+            document.getElementById('progress-bar').style.width = '0%';
+            
+            updateXiaoaiSpeech("stop");
+        }
+
         function startChallenge() {
+            // 清除之前的计时器
+            if (challengeTimer) {
+                clearInterval(challengeTimer);
+            }
+            
             const emotions = Object.keys(emotionEmojis);
             challengeEmotion = emotions[Math.floor(Math.random() * emotions.length)];
-            document.getElementById("challenge").innerText = `挑战开始：请做出【${challengeEmotion}】的表情！`;
-            document.getElementById("result").innerText = "";
+            
+            // 获取情绪对应的颜色
+            let emotionColor = emotionEmojis[challengeEmotion].color;
+            
+            document.getElementById("challenge").innerHTML = `
+                <div style="font-size: 1.2rem; font-weight: bold; color: ${emotionColor};">
+                    挑战开始：请做出【${challengeEmotion}】的表情！
+                    ${emotionEmojis[challengeEmotion].emoji}
+                </div>
+            `;
+            document.getElementById("result").innerHTML = "";
             document.getElementById("emoji").innerText = "";
+            
+            // 更新小艾的对话
+            updateXiaoaiSpeech("challenge");
+            
+            // 设置挑战计时器 - 10秒
+            challengeTimeLeft = 10;
+            document.getElementById("progress-bar").style.width = "100%";
+            
+            challengeTimer = setInterval(() => {
+                challengeTimeLeft--;
+                
+                // 更新进度条
+                const progressPercentage = (challengeTimeLeft / 10) * 100;
+                document.getElementById("progress-bar").style.width = `${progressPercentage}%`;
+                
+                // 改变进度条颜色
+                if (challengeTimeLeft <= 3) {
+                    document.getElementById("progress-bar").style.background = "linear-gradient(90deg, var(--danger), var(--warning))";
+                }
+                
+                if (challengeTimeLeft <= 0) {
+                    clearInterval(challengeTimer);
+                    document.getElementById("challenge").innerHTML = `<div class="fail-message">时间到！挑战失败。</div>`;
+                    consecutiveSuccess = 0; // 重置连续成功计数
+                    updateXiaoaiSpeech("fail");
+                    
+                    // 短暂延迟后开始新挑战
+                    setTimeout(() => {
+                        startChallenge();
+                    }, 2000);
+                }
+            }, 1000);
         }
     </script>
 </body>
