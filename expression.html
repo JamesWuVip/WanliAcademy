@@ -10,7 +10,9 @@
         #webcam-container { margin: 2rem auto 1rem; }
         #label-container { font-size: 1.2rem; margin-bottom: 1.5rem; }
         #result { font-size: 1.5rem; font-weight: bold; margin-top: 1.5rem; }
-        button { background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 0.7rem 2rem; font-size: 1.1rem; cursor: pointer; margin-top: 1.5rem; }
+        #score, #challenge { font-size: 1.2rem; margin-top: 1rem; }
+        #emoji { font-size: 4rem; margin-top: 1rem; }
+        button { background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 0.7rem 2rem; font-size: 1.1rem; cursor: pointer; margin-top: 1.5rem; margin-left: 0.5rem; }
         button:hover { background: #4f46e5; }
     </style>
 </head>
@@ -18,17 +20,28 @@
     <h1>表情识别情绪小游戏</h1>
     <p>对着摄像头做出表情，看看AI能不能猜出你的情绪！</p>
     <button type="button" onclick="init()" id="start-btn">开始</button>
+    <button type="button" onclick="startChallenge()" id="challenge-btn" disabled>表情挑战</button>
     <div id="webcam-container"></div>
     <div id="label-container"></div>
     <div id="result"></div>
+    <div id="emoji"></div>
+    <div id="score">分数: 0</div>
+    <div id="challenge"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js" defer></script>
-    <script type="text/javascript" defer>
+    <script src="https://unpkg.com/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://unpkg.com/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script type="text/javascript">
         const URL = "https://teachablemachine.withgoogle.com/models/l5zlFP5FJ/";
         let model, webcam, labelContainer, maxPredictions;
         let lastEmotion = "";
         let lastTime = Date.now();
+        let score = 0;
+        let challengeEmotion = null;
+        const emotionEmojis = {
+            "开心": "😄",
+            "不开心": "😢",
+            "愤怒": "😠",
+        };
 
         async function init() {
             document.getElementById("start-btn").disabled = true;
@@ -50,6 +63,7 @@
                 for (let i = 0; i < maxPredictions; i++) {
                     labelContainer.appendChild(document.createElement("div"));
                 }
+                document.getElementById("challenge-btn").disabled = false;
             } catch (err) {
                 alert("摄像头初始化失败，请检查权限或用本地服务器打开页面。\n错误信息：" + err.message);
                 document.getElementById("start-btn").disabled = false;
@@ -75,12 +89,32 @@
                     emotion = prediction[i].className;
                 }
             }
-            // 如果识别到的情绪有变化，或者持续2秒以上，显示结果
-            if (emotion !== lastEmotion || Date.now() - lastTime > 2000) {
-                document.getElementById("result").innerText = "AI识别你现在的情绪是：" + emotion;
-                lastEmotion = emotion;
-                lastTime = Date.now();
+            if (challengeEmotion) {
+                if (emotion === challengeEmotion && maxProb > 0.8) {
+                    document.getElementById("challenge").innerText = `太棒了！你做出了【${challengeEmotion}】的表情！`;
+                    score += 10;
+                    document.getElementById("score").innerText = "分数: " + score;
+                    challengeEmotion = null; // 挑战成功，重置
+                }
+            } else {
+                // 如果识别到的情绪有变化，或者持续2秒以上，显示结果
+                if (emotion !== lastEmotion || Date.now() - lastTime > 2000) {
+                    document.getElementById("result").innerText = "AI识别你现在的情绪是：" + emotion;
+                    lastEmotion = emotion;
+                    lastTime = Date.now();
+                    if (emotionEmojis[emotion]) {
+                        document.getElementById("emoji").innerText = emotionEmojis[emotion];
+                    }
+                }
             }
+        }
+
+        function startChallenge() {
+            const emotions = Object.keys(emotionEmojis);
+            challengeEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+            document.getElementById("challenge").innerText = `挑战开始：请做出【${challengeEmotion}】的表情！`;
+            document.getElementById("result").innerText = "";
+            document.getElementById("emoji").innerText = "";
         }
     </script>
 </body>
