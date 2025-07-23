@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>表情识别情绪小游戏</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #181f2a; color: #fff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; text-align: center; }
+        h1 { margin-top: 2rem; font-size: 2rem; }
+        #webcam-container { margin: 2rem auto 1rem; }
+        #label-container { font-size: 1.2rem; margin-bottom: 1.5rem; }
+        #result { font-size: 1.5rem; font-weight: bold; margin-top: 1.5rem; }
+        button { background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 0.7rem 2rem; font-size: 1.1rem; cursor: pointer; margin-top: 1.5rem; }
+        button:hover { background: #4f46e5; }
+    </style>
+</head>
+<body>
+    <h1>表情识别情绪小游戏</h1>
+    <p>对着摄像头做出表情，看看AI能不能猜出你的情绪！</p>
+    <button type="button" onclick="init()" id="start-btn">开始</button>
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script type="text/javascript">
+        const URL = "https://teachablemachine.withgoogle.com/models/l5zlFP5FJ/";
+        let model, webcam, labelContainer, maxPredictions;
+        let lastEmotion = "";
+        let lastTime = Date.now();
+
+        async function init() {
+            document.getElementById("start-btn").disabled = true;
+            try {
+                const modelURL = URL + "model.json";
+                const metadataURL = URL + "metadata.json";
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
+
+                const flip = true;
+                webcam = new tmImage.Webcam(200, 200, flip);
+                await webcam.setup();
+                await webcam.play();
+                window.requestAnimationFrame(loop);
+
+                document.getElementById("webcam-container").appendChild(webcam.canvas);
+                labelContainer = document.getElementById("label-container");
+                labelContainer.innerHTML = "";
+                for (let i = 0; i < maxPredictions; i++) {
+                    labelContainer.appendChild(document.createElement("div"));
+                }
+            } catch (err) {
+                alert("摄像头初始化失败，请检查权限或用本地服务器打开页面。\n错误信息：" + err.message);
+                document.getElementById("start-btn").disabled = false;
+            }
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            let maxProb = 0;
+            let emotion = "";
+            for (let i = 0; i < maxPredictions; i++) {
+                const classPrediction =
+                    prediction[i].className + ": " + (prediction[i].probability * 100).toFixed(1) + "%";
+                labelContainer.childNodes[i].innerHTML = classPrediction;
+                if (prediction[i].probability > maxProb) {
+                    maxProb = prediction[i].probability;
+                    emotion = prediction[i].className;
+                }
+            }
+            // 如果识别到的情绪有变化，或者持续2秒以上，显示结果
+            if (emotion !== lastEmotion || Date.now() - lastTime > 2000) {
+                document.getElementById("result").innerText = "AI识别你现在的情绪是：" + emotion;
+                lastEmotion = emotion;
+                lastTime = Date.now();
+            }
+        }
+    </script>
+</body>
+</html>
